@@ -65,4 +65,365 @@ components:
           type: string
           description: Error message.
 
+    Status:
+      type: string
+      enum:
+        - INITIAL
+        - INACTIVE
+        - ACTIVE
+
+    ESimDetails:
+      description: E-sim's information
+      properties:
+        id:
+          type: integer
+          format: int64
+        iccid:
+          type: string
+        imsi:
+          type: string
+        activationCode:
+          type: string
+        eId:
+          type: string
+      required:
+        - iccid
+        - imsi
+        - activationCode
+
+    AbstractDeviceDetails:
+      description: Device's information
+      properties:
+        id:
+          type: integer
+          format: int64
+        deviceUniqueId:
+          type: string
+        type:
+          type: string
+        os:
+          type: string
+        metaTag:
+          type: string
+      required:
+        - type
+        - os
+        - metaTag
+
+    AbstractUserDetails:
+      description: User's information
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        email:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+      required:
+        - name
+        - email
+
+    CreateDeviceDetails:
+      description: Device information
+      allOf:
+        - $ref: '#/components/schemas/AbstractDeviceDetails'
+        - type: object
+          properties:
+            eSims:
+              type: array
+              items:
+                $ref: '#/components/schemas/ESimDetails'
+
+    CreateUserDetails:
+      description: User information
+      allOf:
+        - $ref: '#/components/schemas/AbstractUserDetails'
+        - type: object
+          properties:
+            password:
+              type: string
+            devices:
+              type: array
+              items:
+                $ref: '#/components/schemas/AbstractDeviceDetails'
+          required:
+            - password
+
+    UpsertUserDetails:
+      description: User information
+      allOf:
+        - $ref: '#/components/schemas/AbstractUserDetails'
+        - type: object
+          properties:
+            password:
+              type: string
+
 paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create new user
+      operationId: createUser
+      requestBody:
+        description: User object to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDetails'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Users
+      summary: Get users
+      operationId: getUsers
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortParam'
+        - $ref: '#/components/parameters/filterParam'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbstractUserDetails'
+        default:
+          $ref: '#/components/schemas/Error'
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Get user's info
+      operationId: getUser
+      parameters:
+        - name: userId
+          description: Loan ID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbstractUserDetails'
+        default:
+          $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Users
+      summary: Update user
+      operationId: editUser
+      parameters:
+        - name: userId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: User information to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertUserDetails'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      operationId: removeUser
+      parameters:
+        - name: userId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+  /users/{userId}/devices:
+    get:
+      tags:
+        - Users
+      summary: Get user's devices
+      operationId: listUsersDevices
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - name: userId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AbstractDeviceDetails'
+        default:
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+        - Users
+      summary: Assign devices to user
+      operationId: assignDevicesToUser
+      parameters:
+        - name: userId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Device's information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/AbstractDeviceDetails'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+  /users/{userId}/devices/{deviceId}:
+    delete:
+      tags:
+        - Users
+      summary: Remove device from user
+      operationId: removeDeviceFromUser
+      parameters:
+        - name: userId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: deviceId
+          description: Device Id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+  /devices/{deviceId}/e-sims:
+    post:
+      tags:
+        - Devices
+      summary: Assign e-sims to devices
+      operationId: assignESimsToDevices
+      parameters:
+        - name: deviceId
+          description: Device id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: E-Sim's information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ESimDetails'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'
+    get:
+      tags:
+        - Users
+      summary: Get device's e-sims
+      operationId: listDevicesEsims
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - name: deviceId
+          description: User id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ESimDetails'
+        default:
+          $ref: '#/components/responses/Error'
+  /devices/{deviceId}/e-sims/{eSimId}:
+    delete:
+      tags:
+        - Users
+      summary: Remove e-sim from device
+      operationId: removeESimFromDevice
+      parameters:
+        - name: deviceId
+          description: Device id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: eSimId
+          description: E-sim Id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/components/responses/Error'

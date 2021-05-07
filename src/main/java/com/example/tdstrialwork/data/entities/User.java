@@ -2,8 +2,11 @@ package com.example.tdstrialwork.data.entities;
 
 import com.example.tdstrialwork.helpers.Constants;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -16,16 +19,17 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @Data
+@ToString(exclude = "devices")
+@EqualsAndHashCode(exclude = "devices")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @NotNull
     @NotBlank
     @Length(min = Constants.MIN_NAME_LENGTH, max = Constants.MAX_NAME_LENGTH, message = "Requested name length is out of range!")
-    @Pattern(regexp = Constants.NAME_REGEX, message = "Requested name is not valid!")
     @Column(nullable = false)
     private String name;
 
@@ -38,19 +42,22 @@ public class User {
 
     @NotNull
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String password;
 
     @NotNull
-    @NotBlank
-    @Column(nullable = false)
-    private boolean active = false;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private Status status;
 
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(
             mappedBy = "user",
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            cascade = CascadeType.MERGE
     )
-    private Set<Device> devices = new HashSet<>();
+    Set<Device> devices = new HashSet<>();
 
     public void addDevice(Device device) {
         this.devices.add(device);
@@ -62,7 +69,19 @@ public class User {
         device.setUser(null);
     }
 
-    public void setPassword(final String password) {
-        this.password = new BCryptPasswordEncoder().encode(password);
+    public enum Status {
+        INITIAL("initial"),
+        INACTIVE("inactive"),
+        ACTIVE("active");
+
+        private final String id;
+
+        Status(final String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return this.id;
+        }
     }
 }

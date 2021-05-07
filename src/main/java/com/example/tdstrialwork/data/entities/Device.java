@@ -1,6 +1,8 @@
 package com.example.tdstrialwork.data.entities;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,15 +14,15 @@ import java.util.UUID;
 @Entity
 @Table(name = "devices")
 @Data
+@ToString(exclude = "eSims")
+@EqualsAndHashCode(exclude = "eSims")
 public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long deviceId;
+    private Long id;
 
-    @NotNull
-    @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private UUID deviceUniqueId = UUID.randomUUID();
 
     @NotNull
@@ -39,13 +41,16 @@ public class Device {
     private String metaTag;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(
             mappedBy = "device",
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            cascade = CascadeType.MERGE
     )
-    private Set<ESim> eSims = new HashSet<>();
+    Set<ESim> eSims = new HashSet<>();
 
     public void addESim(ESim eSim) {
         this.eSims.add(eSim);
@@ -57,15 +62,8 @@ public class Device {
         eSim.setDevice(null);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Device )) return false;
-        return deviceId != null && deviceId.equals(((Device) o).getDeviceId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    @PrePersist
+    private void preSet() {
+        this.setDeviceUniqueId(UUID.randomUUID());
     }
 }

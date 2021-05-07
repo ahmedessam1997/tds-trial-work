@@ -14,36 +14,40 @@ public class ESim {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eSimId;
+    private Long id;
 
     @NotNull
     @NotBlank
     @Column(nullable = false)
-    private String ICCID;
+    private String iccid;
 
     @NotNull
     @NotBlank
     @Column(nullable = false)
-    private String IMSI;
+    private String imsi;
 
     @NotNull
     @NotBlank
     @Column(nullable = false)
     private String activationCode;
 
-    @NotNull
-    @NotBlank
-    @Column(nullable = false, unique = true)
-    private UUID eId = UUID.randomUUID();
+    @Column(unique = true)
+    private UUID eId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "device_id", nullable = false)
     private Device device;
+
+    @PrePersist
+    private void preSet() {
+        this.setEId(UUID.randomUUID());
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ESim )) return false;
-        return eSimId != null && eSimId.equals(((ESim) o).getESimId());
+        return id != null && id.equals(((ESim) o).getId());
     }
 
     @Override
