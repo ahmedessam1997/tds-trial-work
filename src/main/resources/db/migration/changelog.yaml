@@ -1,22 +1,23 @@
 databaseChangeLog:
   - changeSet:
       id: createTables
+      author: Ahmed Essam
       changes:
         - sqlFile:
             dbms: mysql
             encoding: utf8
-            endDelimiter: \n/\s*\n|\n/\s*$
-            path:
+            path: tables/01-create-tables.sql
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: true
   - changeSet:
       id: insertData
+      author: Ahmed Essam
       changes:
         - sqlFile:
             dbms: mysql
             encoding: utf8
-            path:
+            path: data/02-initialize-tables.sql
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: true
