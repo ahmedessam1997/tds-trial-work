@@ -1,0 +1,13 @@
+package com.example.tdstrialwork;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TdsTrialWorkApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}

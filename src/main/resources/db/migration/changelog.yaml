@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTables
+      changes:
+        - sqlFile:
+            dbms: mysql
+            encoding: utf8
+            endDelimiter: \n/\s*\n|\n/\s*$
+            path:
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: insertData
+      changes:
+        - sqlFile:
+            dbms: mysql
+            encoding: utf8
+            path:
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
