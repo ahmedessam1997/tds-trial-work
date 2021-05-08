@@ -15,14 +15,11 @@
 
 <script>
     window.onload = function () {
-        // Build a system
-        const redirectUrl = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf("/")) + '/oauth2-redirect.html';
 
         window.ui = SwaggerUIBundle({
             url: "./api.yaml",
             dom_id: '#swagger-ui',
             deepLinking: true,
-            oauth2RedirectUrl: redirectUrl,
             presets: [
                 SwaggerUIBundle.presets.apis
             ],
