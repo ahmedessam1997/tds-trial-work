@@ -18,7 +18,7 @@
         // Build a system
         const redirectUrl = location.origin + location.pathname.substring(0, location.pathname.lastIndexOf("/")) + '/oauth2-redirect.html';
 
-        const ui = SwaggerUIBundle({
+        window.ui = SwaggerUIBundle({
             url: "./api.yaml",
             dom_id: '#swagger-ui',
             deepLinking: true,
@@ -30,12 +30,6 @@
                 SwaggerUIBundle.plugins.DownloadUrl
             ],
         })
-
-        ui.initOAuth({
-            clientId: 'admin-portal'
-        });
-
-        window.ui = ui
     }
 
 </script>

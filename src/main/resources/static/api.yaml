@@ -5,7 +5,7 @@ info:
   title: Trial work APIs
 
 servers:
-  - url: http://localhost:8080/api/v1
+  - url: http://localhost:3030/api/v1
     description: Local development server
 
 components:
@@ -377,7 +377,7 @@ paths:
           $ref: '#/components/responses/Error'
     get:
       tags:
-        - Users
+        - Devices
       summary: Get device's e-sims
       operationId: listDevicesEsims
       parameters:
@@ -404,7 +404,7 @@ paths:
   /devices/{deviceId}/e-sims/{eSimId}:
     delete:
       tags:
-        - Users
+        - Devices
       summary: Remove e-sim from device
       operationId: removeESimFromDevice
       parameters:
