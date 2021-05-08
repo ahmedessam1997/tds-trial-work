@@ -43,6 +43,7 @@ public class UserService {
     @Transactional
     public void createUser(User user) {
         /* To create new user */
+
         user.setId(null);
         user.setPassword(this.passwordEncoder.hash(user.getPassword()));
         user.setStatus(User.Status.INITIAL);
@@ -72,6 +73,7 @@ public class UserService {
     @Transactional
     public void assignDevicesToUser(long userId, List<Device> devices) {
         var user = findUser(userId);
+        validateUserStatus(user);
         devices.forEach(user::addDevice);
         this.deviceRepository.saveAll(devices);
         this.userRepository.save(user);
@@ -87,8 +89,16 @@ public class UserService {
         var device = this.deviceRepository.findById(deviceId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.ITEM_NOT_FOUND_MESSAGE));
         var user = findUser(userId);
+        validateUserStatus(user);
         user.removeDevice(device);
         this.deviceRepository.delete(device);
+    }
+
+    private void validateUserStatus(User user) {
+        if (!user.getStatus().getId().equals("ACTIVE"))
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not active!");
+        }
     }
 
     private void setPassword(User existedUser, User user) {

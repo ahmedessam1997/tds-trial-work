@@ -38,6 +38,7 @@ public class DeviceService {
         return this.eSimRepository.getESimsByDeviceId(deviceId, paging);
     }
 
+    @Transactional
     public void removeESimFromDevice(Long deviceId, Long eSimId) {
         var eSim = this.eSimRepository.findById(eSimId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.ITEM_NOT_FOUND_MESSAGE));
