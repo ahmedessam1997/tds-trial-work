@@ -11,3 +11,8 @@
 - Build the spring boot project and run the tests with Maven ```mvn clean install```
 
 - Run spring boot app using Maven ```mvn spring-boot:run``` and the server will be up at port 3030
+
+## Swagger API documentation 
+
+- Open in the browser ```http://localhost:3030/swagger-ui.html```
+
