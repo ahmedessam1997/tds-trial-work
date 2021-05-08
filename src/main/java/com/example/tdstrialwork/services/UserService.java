@@ -5,6 +5,7 @@ import com.example.tdstrialwork.data.entities.User;
 import com.example.tdstrialwork.helpers.Constants;
 import com.example.tdstrialwork.repository.DeviceRepository;
 import com.example.tdstrialwork.repository.UserRepository;
+import com.example.tdstrialwork.services.support.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class UserService {
     private DeviceRepository deviceRepository;
 
     @Autowired
-    private PasswordHashing passwordHashing;
+    private PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public Page<User> getUsers(Pageable paging, Specification<User> specification) {
@@ -43,7 +44,7 @@ public class UserService {
     public void createUser(User user) {
         /* To create new user */
         user.setId(null);
-        user.setPassword(this.passwordHashing.hash(user.getPassword()));
+        user.setPassword(this.passwordEncoder.hash(user.getPassword()));
         user.setStatus(User.Status.INITIAL);
         var savedUser = this.userRepository.save(user);
         setDevices(savedUser);
@@ -97,7 +98,7 @@ public class UserService {
         }
         else
         {
-            user.setPassword(this.passwordHashing.hash(user.getPassword()));
+            user.setPassword(this.passwordEncoder.hash(user.getPassword()));
         }
     }
 

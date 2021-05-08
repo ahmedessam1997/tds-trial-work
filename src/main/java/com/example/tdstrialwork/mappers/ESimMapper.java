@@ -3,6 +3,7 @@ package com.example.tdstrialwork.mappers;
 import com.example.tdstrialwork.data.entities.ESim;
 import io.reflectoring.model.ESimDetails;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,9 +15,12 @@ public interface ESimMapper {
 
     List<ESimDetails> mapToESimDetails(List<ESim> eSims);
 
+    @Mapping(source = "EId", target = "eId")
+    ESimDetails map(ESim eSim);
+
     UUID map(String value);
 
     default String map(UUID value) {
-        return value.toString();
+        return String.valueOf(value);
     }
 }

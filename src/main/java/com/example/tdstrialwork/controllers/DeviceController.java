@@ -1,7 +1,6 @@
 package com.example.tdstrialwork.controllers;
 
 import com.example.tdstrialwork.helpers.Constants;
-import com.example.tdstrialwork.mappers.DeviceMapper;
 import com.example.tdstrialwork.mappers.ESimMapper;
 import com.example.tdstrialwork.services.DeviceService;
 import io.reflectoring.api.DevicesApi;

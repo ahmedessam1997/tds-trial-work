@@ -43,6 +43,10 @@ public class ESim {
         this.setEId(UUID.randomUUID());
     }
 
+    public String getEId() {
+        return this.eId.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

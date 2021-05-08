@@ -66,4 +66,8 @@ public class Device {
     private void preSet() {
         this.setDeviceUniqueId(UUID.randomUUID());
     }
+
+    public String getDeviceUniqueId() {
+        return this.deviceUniqueId.toString();
+    }
 }

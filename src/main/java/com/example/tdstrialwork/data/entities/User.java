@@ -57,7 +57,7 @@ public class User {
             orphanRemoval = true,
             cascade = CascadeType.MERGE
     )
-    Set<Device> devices = new HashSet<>();
+    Set<Device> devices;
 
     public void addDevice(Device device) {
         this.devices.add(device);
