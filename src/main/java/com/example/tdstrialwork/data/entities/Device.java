@@ -70,4 +70,16 @@ public class Device {
     public String getDeviceUniqueId() {
         return this.deviceUniqueId.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ESim )) return false;
+        return id != null && id.equals(((ESim) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

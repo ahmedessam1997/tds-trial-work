@@ -43,7 +43,6 @@ public class UserService {
     @Transactional
     public void createUser(User user) {
         /* To create new user */
-
         user.setId(null);
         user.setPassword(this.passwordEncoder.hash(user.getPassword()));
         user.setStatus(User.Status.INITIAL);
@@ -95,7 +94,7 @@ public class UserService {
     }
 
     private void validateUserStatus(User user) {
-        if (!user.getStatus().getId().equals("ACTIVE"))
+        if (!user.getStatus().getId().equals("active"))
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not active!");
         }
